@@ -1,0 +1,376 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#7c3aed" />
+  <meta name="description" content="Moodke — Discover more. Spend less. Find nearby experiences, events and special offers selected for you." />
+  <title>Moodke — Discover More. Spend Less.</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Moodke" />
+  <meta name="application-name" content="Moodke" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="images/icon.svg" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <div class="app">
+    <header class="topbar" role="banner">
+      <div class="brandrow">
+        <div>
+          <div class="brand"><span>Moodke</span></div>
+          <button class="location" id="locationBtn" type="button" onclick="openLocationModal()">
+            📍 <span id="locationLabel">🌎 All locations</span>
+          </button>
+        </div>
+        <button class="iconbtn" id="notifBtn" aria-label="Notifications" type="button">🔔</button>
+      </div>
+
+      <form class="searchbar" role="search" onsubmit="event.preventDefault(); go('search');">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search food, beauty, events..."
+          aria-label="Search offers"
+          autocomplete="off"
+        />
+        <button id="searchBtn" type="submit">Search</button>
+      </form>
+    </header>
+
+    <main id="main" role="main">
+      <!-- HOME -->
+      <section id="home" class="page active" aria-labelledby="home-title">
+        <div class="hero">
+          <h1 id="home-title">Discover more. Spend less.</h1>
+          <p>Find nearby experiences, events and special offers selected for you.</p>
+          <button type="button" onclick="go('categories')">Explore now</button>
+        </div>
+
+        <div class="sectionhead">
+          <h2>Explore categories</h2>
+          <button class="linkbtn" type="button" onclick="go('categories')">See all</button>
+        </div>
+        <div class="chips" id="categoryChips"></div>
+
+        <div class="sectionhead">
+          <h2>Recommended for you</h2>
+          <button class="linkbtn" type="button" onclick="go('search')">View all</button>
+        </div>
+        <div class="grid" id="homeOffers"></div>
+
+        <!-- NEW THIS WEEK -->
+        <div id="newSection" style="display:none">
+          <div class="sectionhead">
+            <h2>🆕 New this week</h2>
+            <button class="linkbtn" type="button" onclick="go('search')">See all</button>
+          </div>
+          <div class="list" id="newOffers"></div>
+        </div>
+
+        <div class="sectionhead"><h2>Ending soon</h2></div>
+        <div class="list" id="endingOffers"></div>
+      </section>
+
+      <!-- SEARCH -->
+      <section id="search" class="page" aria-labelledby="search-title">
+        <div class="sectionhead">
+          <h2 id="search-title">Search results</h2>
+          <span id="resultCount" class="location"></span>
+        </div>
+        <div class="chips" id="filterChips"></div>
+        <div class="list" id="searchResults" style="margin-top:14px"></div>
+      </section>
+
+      <!-- CATEGORIES -->
+      <section id="categories" class="page" aria-labelledby="cat-title">
+        <div class="sectionhead"><h2 id="cat-title">All categories</h2></div>
+        <div class="categorygrid" id="categoryGrid"></div>
+      </section>
+
+      <!-- MAP -->
+      <section id="map" class="page" aria-labelledby="map-title">
+        <div class="sectionhead">
+          <h2 id="map-title">Map view</h2>
+          <span class="location" id="mapLocationLabel">Offers near you</span>
+        </div>
+        <div class="map" id="mapBox" aria-label="Map of nearby offers"></div>
+      </section>
+
+      <!-- FAVORITES -->
+      <section id="favorites" class="page" aria-labelledby="fav-title">
+        <div class="sectionhead"><h2 id="fav-title">Your favorites</h2></div>
+        <div class="list" id="favoriteList"></div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="profile" class="page" aria-labelledby="profile-title">
+
+        <div id="noProfile" class="card profilehead">
+          <div class="avatar" aria-hidden="true">?</div>
+          <h2 style="margin:12px 0 6px">Welcome to Moodke</h2>
+          <p class="location" style="justify-content:center;margin-bottom:18px">
+            Create a profile to get started
+          </p>
+
+          <div class="rolepick">
+            <button class="rolecard" type="button" onclick="startProfile('personal')">
+              <div class="rolecard-icon">👤</div>
+              <strong>Personal</strong>
+              <small>Discover offers & save favorites</small>
+            </button>
+
+            <button class="rolecard" type="button" onclick="startProfile('business')">
+              <div class="rolecard-icon">🏪</div>
+              <strong>Business</strong>
+              <small>Publish offers & reach customers</small>
+            </button>
+          </div>
+        </div>
+
+        <div id="createProfileForm" class="card" style="display:none">
+          <div class="sectionhead" style="margin-top:0">
+            <h2 id="profileFormTitle">Create personal profile</h2>
+            <button class="linkbtn" type="button" onclick="cancelProfile()">Cancel</button>
+          </div>
+
+          <form onsubmit="saveProfile(event)">
+            <label for="pf-name">Full name</label>
+            <input id="pf-name" name="name" required placeholder="Your name" />
+
+            <label for="pf-email">Email</label>
+            <input id="pf-email" name="email" type="email" required placeholder="you@email.com" />
+
+            <div id="bizFields" style="display:none">
+              <label for="pf-biz">Business name</label>
+              <input id="pf-biz" name="businessName" placeholder="Your business" />
+
+              <label for="pf-cat">Business category</label>
+              <select id="pf-cat" name="businessCategory">
+                <option>Food</option>
+                <option>Beauty</option>
+                <option>Fitness</option>
+                <option>Events</option>
+                <option>Shopping</option>
+                <option>Services</option>
+                <option>Cafés</option>
+                <option>Wellness</option>
+              </select>
+
+              <label for="pf-state">State</label>
+              <select id="pf-state" name="state">
+                <option value="">Select a state</option>
+              </select>
+
+              <label for="pf-city">City</label>
+              <input id="pf-city" name="city" placeholder="City" />
+
+              <label for="pf-address">Street address</label>
+              <input id="pf-address" name="address" placeholder="123 Main St" />
+            </div>
+
+            <label for="pf-phone">Phone (optional)</label>
+            <input id="pf-phone" name="phone" placeholder="+1 555 000 0000" />
+
+            <button class="primarybtn" type="submit">Create profile</button>
+          </form>
+        </div>
+
+        <div id="profileActive" style="display:none">
+          <div class="card profilehead">
+            <div class="avatar" id="profileAvatar" aria-hidden="true">MB</div>
+            <h2 id="profileName" style="margin-bottom:4px">Manouche</h2>
+            <div class="location" id="profileMeta" style="justify-content:center">
+              Moodke Explorer
+            </div>
+
+            <div class="statrow">
+              <div class="stat"><strong id="savedStat">0</strong><small>Saved</small></div>
+              <div class="stat"><strong>$84</strong><small>Savings</small></div>
+              <div class="stat"><strong>12</strong><small>Visits</small></div>
+            </div>
+
+            <div class="roleToggle">
+              <button id="userRoleBtn" class="active" type="button" onclick="setRole('user')">Customer</button>
+              <button id="businessRoleBtn" type="button" onclick="setRole('business')">Business</button>
+            </div>
+          </div>
+
+          <div id="customerMenu" class="card">
+            <div class="menuitem"><span>🎟️ My reservations</span><span>›</span></div>
+            <div class="menuitem"><span>🌐 Language</span><span>English ›</span></div>
+            <div class="menuitem" onclick="logout()" style="color:var(--danger)">
+              <span>🚪 Log out</span><span>›</span>
+            </div>
+          </div>
+
+          <div id="businessPanel" style="display:none">
+            <div class="bizinfo card">
+              <div class="bizinfo-row">
+                <span>🏢 <strong id="bizNameLabel">—</strong></span>
+                <span id="bizCatLabel" class="biztag">—</span>
+              </div>
+              <div class="bizinfo-row" style="color:var(--muted);font-size:12px">
+                📍 <span id="bizAddrLabel">—</span>
+              </div>
+            </div>
+
+            <div class="dashboardstats">
+              <div class="dashstat"><small>Offer views</small><strong id="viewStat">1,248</strong></div>
+              <div class="dashstat"><small>Saves</small><strong id="saveBizStat">86</strong></div>
+              <div class="dashstat"><small>Reservations</small><strong>34</strong></div>
+              <div class="dashstat"><small>Conversion</small><strong>8.2%</strong></div>
+            </div>
+
+            <button class="primarybtn" type="button" onclick="openCreateOffer()">
+              ＋ Create a new offer
+            </button>
+
+            <div class="sectionhead"><h2>Your active offers</h2></div>
+            <div class="list" id="businessOffers"></div>
+
+            <div class="menuitem" onclick="logout()" style="color:var(--danger);margin-top:14px">
+              <span>🚪 Log out</span><span>›</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <nav class="bottomnav" role="navigation" aria-label="Primary">
+      <button class="navbtn active" data-page="home" type="button" onclick="go('home')"><span>⌂</span>Home</button>
+      <button class="navbtn" data-page="search" type="button" onclick="go('search')"><span>⌕</span>Discover</button>
+      <button class="navbtn" data-page="map" type="button" onclick="go('map')"><span>⌖</span>Map</button>
+      <button class="navbtn" data-page="favorites" type="button" onclick="go('favorites')"><span>♡</span>Saved</button>
+      <button class="navbtn" data-page="profile" type="button" onclick="go('profile')"><span>☺</span>Profile</button>
+    </nav>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true">
+    <div class="sheet">
+      <button class="close" type="button" onclick="closeModal('detailModal')" aria-label="Close">×</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <!-- Location Modal -->
+  <div class="modal" id="locationModal" role="dialog" aria-modal="true" aria-labelledby="locTitle">
+    <div class="sheet">
+      <button class="close" type="button" onclick="closeModal('locationModal')" aria-label="Close">×</button>
+      <h2 id="locTitle">Where are you looking?</h2>
+      <p style="color:var(--muted);font-size:13px;margin-top:0">
+        We'll show offers available in your area. Leave empty to see all offers.
+      </p>
+
+      <form onsubmit="saveLocation(event)">
+        <label for="loc-state">State</label>
+        <select id="loc-state" name="state">
+          <option value="">All states</option>
+        </select>
+
+        <label for="loc-city">City (optional)</label>
+        <input id="loc-city" name="city" placeholder="e.g. Boston" />
+
+        <button class="primarybtn" type="submit">Apply filter</button>
+        <button class="secondarybtn" type="button" onclick="clearLocation()">Show all locations</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Modal -->
+  <div class="modal" id="createModal" role="dialog" aria-modal="true">
+    <div class="sheet">
+      <button class="close" type="button" onclick="closeModal('createModal')" aria-label="Close">×</button>
+      <h2 id="createTitle">Create an offer</h2>
+
+      <form id="offerForm" onsubmit="createOffer(event)">
+
+        <label>Offer image</label>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('offerImage').click()">
+          <input type="file" id="offerImage" name="image" accept="image/*" hidden />
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">
+              <strong>Click to upload</strong>
+              <small>PNG, JPG, WEBP • Max 5MB</small>
+            </div>
+          </div>
+          <img id="uploadPreview" class="upload-preview" alt="Preview" style="display:none" />
+          <button type="button" class="upload-remove" id="uploadRemove" style="display:none"
+                  onclick="event.stopPropagation();clearUpload()" aria-label="Remove image">×</button>
+        </div>
+
+        <label for="of-title">Offer title</label>
+        <input id="of-title" name="title" required placeholder="Example: 30% off brunch" />
+
+        <label for="of-biz">Business name</label>
+        <input id="of-biz" name="business" required placeholder="Your business" />
+
+        <label for="of-cat">Category</label>
+        <select id="of-cat" name="category">
+          <option>Food</option>
+          <option>Beauty</option>
+          <option>Fitness</option>
+          <option>Events</option>
+          <option>Shopping</option>
+          <option>Services</option>
+          <option>Cafés</option>
+          <option>Wellness</option>
+        </select>
+
+        <div class="locgrid">
+          <div>
+            <label for="of-state">State</label>
+            <select id="of-state" name="state" required>
+              <option value="">Select state</option>
+            </select>
+          </div>
+          <div>
+            <label for="of-city">City</label>
+            <input id="of-city" name="city" required placeholder="City" />
+          </div>
+        </div>
+
+        <label for="of-addr">Street address</label>
+        <input id="of-addr" name="address" placeholder="123 Main St" />
+
+        <label for="of-price">New price</label>
+        <input id="of-price" name="price" required placeholder="$25" />
+
+        <label for="of-old">Original price</label>
+        <input id="of-old" name="oldPrice" placeholder="$40" />
+
+        <label for="of-desc">Description</label>
+        <textarea id="of-desc" name="description" placeholder="Describe the experience and conditions"></textarea>
+
+        <label class="checkline">
+          <input type="checkbox" name="vip" /> VIP offer
+        </label>
+
+        <button class="primarybtn" type="submit">Publish offer</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>

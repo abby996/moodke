@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <title>Moodke — Discover More. Spend Less.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brandrow">
+      <div>
+        <div class="brand"><span>Moodke</span></div>
+        <div class="location">📍 Boston, Massachusetts</div>
+      </div>
+      <button class="iconbtn" id="notifBtn" aria-label="Notifications">🔔</button>
+    </div>
+    <div class="searchbar">
+      <input id="searchInput" placeholder="Search food, beauty, events..." aria-label="Search" />
+      <button id="searchBtn">Search</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="page active">
+      <div class="hero">
+        <h1>Discover more. Spend less.</h1>
+        <p>Find nearby experiences, events and special offers selected for you.</p>
+        <button onclick="go('categories')">Explore now</button>
+      </div>
+
+      <div class="sectionhead"><h2>Explore categories</h2><button class="linkbtn" onclick="go('categories')">See all</button></div>
+      <div class="chips" id="categoryChips"></div>
+
+      <div class="sectionhead"><h2>Recommended for you</h2><button class="linkbtn" onclick="go('search')">View all</button></div>
+      <div class="grid" id="homeOffers"></div>
+
+      <div class="sectionhead"><h2>Ending soon</h2></div>
+      <div class="list" id="endingOffers"></div>
+    </section>
+
+    <section id="search" class="page">
+      <div class="sectionhead"><h2>Search results</h2><span id="resultCount" class="location"></span></div>
+      <div class="chips" id="filterChips"></div>
+      <div class="list" id="searchResults" style="margin-top:14px"></div>
+    </section>
+
+    <section id="categories" class="page">
+      <div class="sectionhead"><h2>All categories</h2></div>
+      <div class="categorygrid" id="categoryGrid"></div>
+    </section>
+
+    <section id="map" class="page">
+      <div class="sectionhead"><h2>Map view</h2><span class="location">Offers near you</span></div>
+      <div class="map" id="mapBox"></div>
+    </section>
+
+    <section id="favorites" class="page">
+      <div class="sectionhead"><h2>Your favorites</h2></div>
+      <div class="list" id="favoriteList"></div>
+    </section>
+
+    <section id="profile" class="page">
+      <div class="card profilehead">
+        <div class="avatar">MB</div>
+        <h2 style="margin-bottom:4px">Manouche</h2>
+        <div class="location" style="justify-content:center">Moodke Explorer • Boston</div>
+        <div class="statrow">
+          <div class="stat"><strong id="savedStat">0</strong><small>Saved</small></div>
+          <div class="stat"><strong>$84</strong><small>Savings</small></div>
+          <div class="stat"><strong>12</strong><small>Visits</small></div>
+        </div>
+        <div class="roleToggle">
+          <button id="userRoleBtn" class="active" onclick="setRole('user')">Customer</button>
+          <button id="businessRoleBtn" onclick="setRole('business')">Business</button>
+        </div>
+      </div>
+
+      <div id="customerMenu" class="card">
+        <div class="menuitem"><span>🎟️ My reservations</span><span>›</span></div>
+        <div class="menuitem"><span>🌐 Language</span><span>English ›</span></div>
+        <div class="menuitem"><span>🔔 Notifications</span><span>On ›</span></div>
+        <div class="menuitem"><span>🌙 Dark mode</span><span>Coming soon</span></div>
+      </div>
+
+      <div id="businessPanel" style="display:none">
+        <div class="dashboardstats">
+          <div class="dashstat"><small>Offer views</small><strong id="viewStat">1,248</strong></div>
+          <div class="dashstat"><small>Saves</small><strong id="saveBizStat">86</strong></div>
+          <div class="dashstat"><small>Reservations</small><strong>34</strong></div>
+          <div class="dashstat"><small>Conversion</small><strong>8.2%</strong></div>
+        </div>
+        <button class="primarybtn" onclick="openCreateOffer()">＋ Create a new offer</button>
+        <div class="sectionhead"><h2>Your active offers</h2></div>
+        <div class="list" id="businessOffers"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottomnav">
+    <button class="navbtn active" data-page="home" onclick="go('home')"><span>⌂</span>Home</button>
+    <button class="navbtn" data-page="search" onclick="go('search')"><span>⌕</span>Discover</button>
+    <button class="navbtn" data-page="map" onclick="go('map')"><span>⌖</span>Map</button>
+    <button class="navbtn" data-page="favorites" onclick="go('favorites')"><span>♡</span>Saved</button>
+    <button class="navbtn" data-page="profile" onclick="go('profile')"><span>☺</span>Profile</button>
+  </nav>
+</div>
+
+<div class="modal" id="detailModal">
+  <div class="sheet">
+    <button class="close" onclick="closeModal('detailModal')">×</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<div class="modal" id="createModal">
+  <div class="sheet">
+    <button class="close" onclick="closeModal('createModal')">×</button>
+    <h2>Create an offer</h2>
+    <form id="offerForm" onsubmit="createOffer(event)">
+      <label>Offer title</label><input name="title" required placeholder="Example: 30% off brunch" />
+      <label>Business name</label><input name="business" required placeholder="Your business" />
+      <label>Category</label>
+      <select name="category"><option>Food</option><option>Beauty</option><option>Fitness</option><option>Events</option><option>Shopping</option><option>Services</option></select>
+      <label>New price</label><input name="price" required placeholder="$25" />
+      <label>Original price</label><input name="oldPrice" placeholder="$40" />
+      <label>Image URL</label><input name="image" placeholder="https://..." />
+      <label>Description</label><textarea name="description" placeholder="Describe the experience and conditions"></textarea>
+      <label><input type="checkbox" name="vip" style="width:auto"> VIP offer</label>
+      <button class="primarybtn" type="submit">Publish offer</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /* =========================================================
-   MOODKE — Edge-to-edge on phone, adaptive on bigger screens
+   MOODKE — Phone-first, natural scroll, edge-to-edge
    ========================================================= */
 
 /* ========== ROOT ========== */
@@ -36,30 +36,35 @@
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  --nav-h: 62px;
 }
 
-/* ========== RESET ========== */
+/* =========================================================
+   RESET — IMPORTANT: pa gen height: 100%, scroll natirèl
+   ========================================================= */
 *, *::before, *::after { box-sizing: border-box; }
 
-html, body {
+html {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg);
-  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* PA GEN height oswa overflow */
 }
 
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-
 body {
-  min-height: 100vh;
-  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
+  font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* PA GEN height: 100% — sa bloke scroll */
 }
 
 img, svg { max-width: 100%; display: block; }
@@ -79,7 +84,6 @@ button { cursor: pointer; border: 0; background: none; }
   background: var(--text);
   color: #fff;
   padding: 10px 16px;
-  border-radius: 0 0 12px 0;
   z-index: 9999;
   text-decoration: none;
   font-weight: 700;
@@ -87,7 +91,7 @@ button { cursor: pointer; border: 0; background: none; }
 .skip-link:focus { left: 0; }
 
 /* =========================================================
-   APP SHELL
+   APP SHELL — scroll natirèl
    ========================================================= */
 .app {
   width: 100%;
@@ -95,23 +99,23 @@ button { cursor: pointer; border: 0; background: none; }
   min-height: 100dvh;
   margin: 0;
   padding: 0;
-  padding-bottom: calc(78px + var(--safe-bottom));
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 8px);
   background: var(--bg);
   position: relative;
 }
 
 /* =========================================================
-   TOPBAR
+   TOPBAR — full width sticky
    ========================================================= */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 20;
   width: 100%;
-  background: rgba(247, 247, 251, .9);
+  background: rgba(247, 247, 251, .95);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
-  padding: calc(14px + var(--safe-top)) 14px 10px;
+  padding: calc(12px + var(--safe-top)) 14px 10px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -119,11 +123,11 @@ button { cursor: pointer; border: 0; background: none; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .brand {
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 900;
   letter-spacing: -1px;
   line-height: 1;
@@ -137,17 +141,16 @@ button { cursor: pointer; border: 0; background: none; }
 }
 
 .location {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--muted);
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   margin-top: 3px;
   padding: 3px 8px;
   border-radius: 999px;
   transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
 }
-#locationBtn:hover { background: var(--primary-soft); color: var(--primary); }
 #locationBtn.active { background: var(--primary-soft); color: var(--primary); font-weight: 700; }
 
 .iconbtn {
@@ -159,6 +162,7 @@ button { cursor: pointer; border: 0; background: none; }
   place-items: center;
   font-size: 17px;
   transition: transform var(--speed) var(--ease);
+  flex-shrink: 0;
 }
 .iconbtn:active { transform: scale(.92); }
 
@@ -173,7 +177,6 @@ button { cursor: pointer; border: 0; background: none; }
   padding: 11px 14px;
   font-size: 14px;
   outline: none;
-  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
 }
 .searchbar input:focus {
   border-color: var(--primary);
@@ -188,34 +191,31 @@ button { cursor: pointer; border: 0; background: none; }
   color: #fff;
   font-weight: 800;
   font-size: 13px;
+  flex-shrink: 0;
 }
 .searchbar button:active { transform: scale(.96); }
 
 /* =========================================================
-   MAIN — PHONE: EDGE-TO-EDGE (padding = 0)
+   MAIN — 0 padding, scroll natirèl
    ========================================================= */
 main {
   width: 100%;
-  padding: 0;                /* ← ZÉRO padding sou telefòn */
+  padding: 0;
+  display: block;
 }
 
 .page { display: none; }
-.page.active { display: block; animation: pageIn .3s var(--ease); }
-
-@keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.page.active { display: block; }
 
 /* =========================================================
-   HERO — PHONE: edge-to-edge
+   HERO — edge-to-edge
    ========================================================= */
 .hero {
   background: var(--gradient-dark);
   color: #fff;
-  border-radius: 0;                /* ← Pa gen kwen awondi */
+  border-radius: 0;
   margin: 0;
-  padding: 28px 20px;
+  padding: 24px 18px;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -224,41 +224,38 @@ main {
 .hero::before {
   content: "";
   position: absolute;
-  width: 220px; height: 220px;
+  width: 200px; height: 200px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,.18), transparent 70%);
-  right: -80px; top: -90px;
+  right: -70px; top: -80px;
   z-index: -1;
 }
 
 .hero h1 {
-  font-size: 26px;
-  line-height: 1.1;
+  font-size: 24px;
+  line-height: 1.15;
   margin: 0 0 8px;
-  max-width: 100%;
   letter-spacing: -.5px;
 }
 
 .hero p {
-  margin: 0 0 18px;
+  margin: 0 0 16px;
   color: #e9def5;
-  font-size: 14px;
-  max-width: 100%;
+  font-size: 13.5px;
 }
 
 .hero button {
   background: #fff;
   color: #4b2376;
-  padding: 11px 20px;
+  padding: 10px 18px;
   border-radius: 12px;
   font-weight: 900;
   font-size: 13px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.15);
 }
 .hero button:active { transform: scale(.97); }
 
 /* =========================================================
-   SECTION HEAD — padding entèn sèlman
+   SECTION HEAD — padding entèn
    ========================================================= */
 .sectionhead {
   display: flex;
@@ -277,7 +274,6 @@ main {
   padding: 4px 6px;
   border-radius: 8px;
 }
-.linkbtn:hover { background: var(--primary-soft); }
 
 /* =========================================================
    CHIPS — padding entèn
@@ -286,9 +282,9 @@ main {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 0 16px 8px;
+  padding: 0 16px 10px;
   scrollbar-width: none;
-  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
 }
 .chips::-webkit-scrollbar { display: none; }
 
@@ -301,8 +297,7 @@ main {
   font-weight: 700;
   font-size: 13px;
   color: #505466;
-  scroll-snap-align: start;
-  transition: all var(--speed) var(--ease);
+  flex-shrink: 0;
 }
 .chip.active {
   background: var(--text);
@@ -311,41 +306,42 @@ main {
 }
 
 /* =========================================================
-   GRID — PHONE: 2 kolòn, gap 0, separator liy
+   GRID — 2 KOLÒN, séparateur liy, edge-to-edge
    ========================================================= */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;                          /* ← Zéro espas */
-  background: var(--bg);           /* Koulè ant kat yo */
+  grid-template-columns: repeat(2, 1fr);   /* ← 2 kolòn */
+  gap: 0;
+  background: var(--line);                  /* Koulè séparateur */
 }
 
 .grid > * {
-  border-bottom: 1px solid var(--line);
-  border-right: 1px solid var(--line);
+  background: var(--card);
 }
-.grid > *:nth-child(2n) { border-right: 0; }
 
 /* =========================================================
-   OFFER CARD — PHONE: edge-to-edge
+   OFFER CARD — edge-to-edge
    ========================================================= */
 .offer {
   background: var(--card);
-  border-radius: 0;               /* ← Pa gen kwen awondi */
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: none;               /* ← Pa gen lonbraj */
+  box-shadow: none;
   position: relative;
   cursor: pointer;
-  transition: background var(--speed) var(--ease);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .offer:active { background: var(--bg-soft); }
 
 .offerimg {
-  height: 130px;
+  height: 120px;
   background-size: cover;
   background-position: center;
   background-color: var(--bg-soft);
   position: relative;
+  flex-shrink: 0;
 }
 
 .badge {
@@ -360,9 +356,7 @@ main {
   font-weight: 900;
   letter-spacing: .4px;
 }
-.badge.vip {
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-}
+.badge.vip { background: linear-gradient(135deg, #f59e0b, #ef4444); }
 .badge.new {
   background: linear-gradient(135deg, #10b981, #059669);
   animation: pulseNew 2s ease-in-out infinite;
@@ -376,36 +370,41 @@ main {
 .fav {
   position: absolute;
   right: 8px; top: 8px;
-  width: 32px; height: 32px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   background: rgba(255, 255, 255, .95);
-  backdrop-filter: blur(6px);
-  font-size: 16px;
+  font-size: 15px;
   display: grid;
   place-items: center;
 }
 .fav:active { transform: scale(.9); }
 
-.offerbody { padding: 11px 12px 13px; }
+.offerbody {
+  padding: 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 
 .offertitle {
   font-weight: 900;
-  font-size: 13.5px;
+  font-size: 13px;
   margin-bottom: 4px;
   letter-spacing: -.2px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.25;
 }
 
-.business { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.business { font-size: 10.5px; color: var(--muted); margin-bottom: 4px; }
 
 .bizloc {
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--primary);
   font-weight: 700;
-  margin-bottom: 7px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 3px;
@@ -415,27 +414,30 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: end;
-  gap: 6px;
+  gap: 4px;
+  margin-top: auto;
 }
 
-.price { font-size: 16px; font-weight: 900; color: var(--primary); }
-.old { font-size: 10.5px; text-decoration: line-through; color: #999; }
-.distance { font-size: 10px; color: var(--muted); }
+.price { font-size: 15px; font-weight: 900; color: var(--primary); }
+.old { font-size: 10px; text-decoration: line-through; color: #999; margin-left: 3px; }
+.distance { font-size: 9.5px; color: var(--muted); }
 
 .countdown {
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--danger);
   font-weight: 800;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  margin-top: 5px;
 }
 
 /* =========================================================
-   LIST — PHONE: edge-to-edge
+   LIST — edge-to-edge, séparateur
    ========================================================= */
-.list { display: flex; flex-direction: column; gap: 0; }
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--line);
+}
 
 .wideoffer {
   display: flex;
@@ -443,25 +445,34 @@ main {
   border-radius: 0;
   overflow: hidden;
   box-shadow: none;
-  border-bottom: 1px solid var(--line);
   cursor: pointer;
-  transition: background var(--speed) var(--ease);
+  min-height: 96px;
 }
 .wideoffer:active { background: var(--bg-soft); }
 
 .wideoffer .thumb {
-  width: 110px;
-  min-height: 100px;
+  width: 100px;
+  min-height: 96px;
   background-size: cover;
   background-position: center;
   background-color: var(--bg-soft);
   flex-shrink: 0;
 }
 
-.wideoffer .content { padding: 12px; flex: 1; min-width: 0; }
+.wideoffer .content {
+  padding: 10px 12px;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wideoffer .offertitle { font-size: 13.5px; }
+.wideoffer .price { font-size: 15px; }
 
 /* =========================================================
-   CARD — PHONE: edge-to-edge
+   CARD — edge-to-edge
    ========================================================= */
 .card {
   background: #fff;
@@ -473,37 +484,38 @@ main {
 }
 
 /* =========================================================
-   CATEGORY GRID
+   CATEGORY GRID — 2 KOLÒN (olye 3)
    ========================================================= */
 .categorygrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);   /* ← 2 kolòn */
   gap: 0;
+  background: var(--line);
 }
 .categorygrid > * {
-  border-bottom: 1px solid var(--line);
-  border-right: 1px solid var(--line);
+  background: #fff;
 }
-.categorygrid > *:nth-child(3n) { border-right: 0; }
 
 .category {
   background: #fff;
   border-radius: 0;
-  padding: 20px 8px;
+  padding: 22px 10px;
   text-align: center;
   font-weight: 800;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
-  transition: background var(--speed) var(--ease);
+  width: 100%;
+  display: block;
 }
 .category:active { background: var(--bg-soft); }
-.category span { display: block; font-size: 26px; margin-bottom: 6px; }
+.category span { display: block; font-size: 28px; margin-bottom: 6px; }
 
 /* =========================================================
    MAP
    ========================================================= */
 .map {
   height: 70vh;
+  min-height: 400px;
   border-radius: 0;
   background:
     radial-gradient(circle at 25% 25%, #d9f3e5 0 10%, transparent 11%),
@@ -513,7 +525,6 @@ main {
   position: relative;
   overflow: hidden;
 }
-.map-section-head { padding: 18px 16px 10px; }
 
 .road { position: absolute; background: #d4d6dd; border-radius: 10px; }
 .road.r1 { width: 700px; height: 18px; transform: rotate(25deg); left: -120px; top: 180px; }
@@ -540,17 +551,17 @@ main {
   color: var(--muted);
   padding: 50px 20px;
   font-size: 14px;
+  background: #fff;
 }
 
 /* =========================================================
-   PROFILE — PHONE: edge-to-edge
+   PROFILE — edge-to-edge
    ========================================================= */
 .profilehead {
   text-align: center;
   padding: 26px 20px;
   background: #fff;
   border-radius: 0;
-  box-shadow: none;
   border-bottom: 1px solid var(--line);
   margin-bottom: 0;
 }
@@ -629,6 +640,7 @@ main {
   grid-template-columns: 1fr 1fr;
   gap: 1px;
   background: var(--line);
+  margin-bottom: 0;
 }
 .dashstat {
   padding: 16px;
@@ -658,7 +670,6 @@ form input, form select, form textarea {
   background: #fff;
   font-size: 14px;
   outline: none;
-  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
 }
 form input:focus, form select:focus, form textarea:focus {
   border-color: var(--primary);
@@ -701,7 +712,6 @@ form textarea { min-height: 90px; resize: vertical; }
   font-size: 13px;
   margin-top: 10px;
 }
-.secondarybtn:active { background: var(--bg-soft); }
 
 /* =========================================================
    ROLE TOGGLE
@@ -721,7 +731,6 @@ form textarea { min-height: 90px; resize: vertical; }
   font-weight: 800;
   font-size: 13px;
   color: var(--muted);
-  transition: all var(--speed) var(--ease);
 }
 .roleToggle button.active {
   background: #fff;
@@ -729,39 +738,45 @@ form textarea { min-height: 90px; resize: vertical; }
 }
 
 /* =========================================================
-   BOTTOM NAV — 100% full width, edge-to-edge
+   BOTTOM NAV — FULL WIDTH, edge-to-edge
    ========================================================= */
 .bottomnav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  width: 100%;
+  width: 100vw;
   z-index: 30;
   background: #fff;
   border-top: 1px solid var(--line);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  padding: 6px 0 calc(6px + var(--safe-bottom));
+  padding: 6px 0;
+  padding-bottom: calc(6px + var(--safe-bottom));
+  height: var(--nav-h);
+  /* Pou iOS safe area */
+  padding-left: var(--safe-bottom);
+  padding-right: var(--safe-bottom);
+  box-sizing: border-box;
 }
 
 .navbtn {
   color: #9295a3;
   font-size: 10px;
   font-weight: 800;
-  padding: 8px 4px;
-  border-radius: 0;
+  padding: 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   transition: color var(--speed) var(--ease);
+  min-width: 0;
+  overflow: hidden;
 }
 .navbtn:active { background: var(--bg-soft); }
 .navbtn span {
-  display: block;
-  font-size: 22px;
-  margin-bottom: 2px;
+  font-size: 21px;
   line-height: 1;
 }
 .navbtn.active { color: var(--primary); }
@@ -778,6 +793,7 @@ form textarea { min-height: 90px; resize: vertical; }
   align-items: flex-end;
   justify-content: center;
   z-index: 50;
+  padding: 0;
 }
 .modal.open { display: flex; animation: fadeBg .2s var(--ease); }
 
@@ -787,10 +803,10 @@ form textarea { min-height: 90px; resize: vertical; }
   width: 100%;
   max-width: 100%;
   max-height: 92vh;
-  overflow: auto;
+  overflow-y: auto;
   background: #fff;
-  border-radius: 24px 24px 0 0;
-  padding: 22px 20px calc(22px + var(--safe-bottom));
+  border-radius: 22px 22px 0 0;
+  padding: 20px 18px calc(24px + var(--safe-bottom));
   animation: slideUp .35s var(--ease);
 }
 
@@ -808,11 +824,10 @@ form textarea { min-height: 90px; resize: vertical; }
   display: grid;
   place-items: center;
 }
-.close:active { transform: scale(.9); }
 
 .detailimg {
-  height: 240px;
-  border-radius: 16px;
+  height: 220px;
+  border-radius: 14px;
   background-size: cover;
   background-position: center;
   background-color: var(--bg-soft);
@@ -825,7 +840,7 @@ form textarea { min-height: 90px; resize: vertical; }
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(90px + var(--safe-bottom));
+  bottom: calc(var(--nav-h) + 20px + var(--safe-bottom));
   transform: translateX(-50%);
   background: var(--text);
   color: #fff;
@@ -912,7 +927,6 @@ form textarea { min-height: 90px; resize: vertical; }
   border-radius: 16px;
   padding: 18px 12px;
   text-align: center;
-  transition: all var(--speed) var(--ease);
   cursor: pointer;
 }
 .rolecard:active { transform: scale(.97); }
@@ -925,7 +939,7 @@ form textarea { min-height: 90px; resize: vertical; }
    ========================================================= */
 .pwa-install {
   position: fixed;
-  bottom: calc(90px + var(--safe-bottom));
+  bottom: calc(var(--nav-h) + 16px + var(--safe-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
@@ -938,7 +952,6 @@ form textarea { min-height: 90px; resize: vertical; }
   box-shadow: var(--shadow-primary);
   white-space: nowrap;
 }
-.pwa-install:active { transform: translateX(-50%) scale(.95); }
 
 /* =========================================================
    ADMIN PANEL
@@ -1092,7 +1105,7 @@ form textarea { min-height: 90px; resize: vertical; }
 }
 
 /* =========================================================
-   📱 TABLET (700px+) — retounen kwen awondi ak padding
+   📱 TABLET (700px+)
    ========================================================= */
 @media (min-width: 700px) {
   main {
@@ -1103,31 +1116,27 @@ form textarea { min-height: 90px; resize: vertical; }
     padding: calc(16px + var(--safe-top)) clamp(20px, 3vw, 32px) 12px;
   }
 
-  /* Hero → kwen awondi */
   .hero {
     border-radius: 24px;
     padding: 32px 28px;
   }
 
-  /* Grid → gap ak kat awondi */
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 14px;
     background: transparent;
   }
-  .grid > * { border: 0 !important; }
+  .grid > * { border-radius: 18px; overflow: hidden; }
 
   .offer {
     border-radius: 18px;
     box-shadow: var(--shadow-sm);
-    overflow: hidden;
   }
 
-  .list { gap: 12px; }
+  .list { gap: 12px; background: transparent; }
   .wideoffer {
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
-    border-bottom: 0;
   }
 
   .card {
@@ -1138,11 +1147,10 @@ form textarea { min-height: 90px; resize: vertical; }
   }
 
   .categorygrid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
     background: transparent;
   }
-  .categorygrid > * { border: 0 !important; }
   .category {
     border-radius: 16px;
     box-shadow: var(--shadow-xs);
@@ -1170,13 +1178,13 @@ form textarea { min-height: 90px; resize: vertical; }
   .dashboardstats {
     gap: 12px;
     background: transparent;
+    margin-bottom: 14px;
   }
   .dashstat { border-radius: 16px; box-shadow: var(--shadow-sm); }
 
   form { padding: 0; }
 
   .map { border-radius: 20px; }
-  .map-section-head { padding: 22px 2px 12px; }
 
   /* Bottom nav → pills flotant */
   .bottomnav {
@@ -1189,7 +1197,10 @@ form textarea { min-height: 90px; resize: vertical; }
     border: 1px solid var(--line);
     box-shadow: var(--shadow-lg);
     padding: 6px;
+    height: auto;
     grid-template-columns: repeat(5, 1fr);
+    padding-left: 6px;
+    padding-right: 6px;
   }
 
   .navbtn { border-radius: 999px; }
@@ -1197,7 +1208,6 @@ form textarea { min-height: 90px; resize: vertical; }
 
   .app { padding-bottom: 100px; }
 
-  /* Modal */
   .modal { align-items: center; padding: 24px; }
   .sheet {
     max-width: 560px;
@@ -1209,7 +1219,7 @@ form textarea { min-height: 90px; resize: vertical; }
 }
 
 /* =========================================================
-   💻 DESKTOP (1024px+) — Sidebar + kontni
+   💻 DESKTOP (1024px+)
    ========================================================= */
 @media (min-width: 1024px) {
   .app {
@@ -1226,7 +1236,6 @@ form textarea { min-height: 90px; resize: vertical; }
     overflow: hidden;
   }
 
-  /* Bottom nav → sidebar */
   .bottomnav {
     grid-area: sidebar;
     position: static;
@@ -1313,7 +1322,6 @@ form textarea { min-height: 90px; resize: vertical; }
     left: auto;
     transform: none;
   }
-  .pwa-install:active { transform: scale(.95); }
 }
 
 /* =========================================================
@@ -1340,19 +1348,19 @@ form textarea { min-height: 90px; resize: vertical; }
     --line-2: #33333e;
     --primary-soft: #241a3d;
   }
-  .topbar { background: rgba(15,15,21,.9); border-bottom-color: var(--line); }
+  .topbar { background: rgba(15,15,21,.95); border-bottom-color: var(--line); }
   .searchbar input, .offer, .wideoffer, .card, .category, .dashstat,
   form input, form select, form textarea, .secondarybtn, .sheet, .bizinfo,
-  .admin-tab.active, .admin-action, .menuitem, .profilehead {
+  .admin-tab.active, .admin-action, .menuitem, .profilehead, .empty,
+  .grid > *, .categorygrid > *, .list {
     background: var(--card);
   }
+  .grid, .categorygrid, .dashboardstats { background: var(--line); }
   .bottomnav { background: var(--card); }
   .roleToggle button.active { background: var(--card); }
   .iconbtn { background: var(--card); }
   .chip { background: var(--card); }
   .chip.active { background: var(--text); }
-  .grid { background: var(--bg); }
-  .dashboardstats { background: var(--line); }
 }
 
 /* =========================================================

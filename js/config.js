@@ -17,6 +17,4 @@ window.MOODKE_CONFIG = {
   SUPABASE_URL: "https://YOUR-PROJECT-ID.supabase.co",
   SUPABASE_ANON_KEY: "YOUR-ANON-KEY-HERE",
 
-  // 🔐 Modpas admin panel (chanje l!)
-  ADMIN_PASSWORD: "moodke-admin-2024"
 };

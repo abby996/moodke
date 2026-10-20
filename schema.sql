@@ -395,6 +395,124 @@ select 'Schema Moodke kreye ak siksè ✅' as status;
 
 
 
+-- =========================================================
+-- MOODKE ADMIN — Tab anplis pou peman, abònman, boosts
+-- Kouri apre schema.sql prensipal la
+-- =========================================================
+
+-- ========== 1. SUBSCRIPTIONS (abònman biznis) ==========
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references public.businesses(id) on delete cascade,
+  plan text not null check (plan in ('free', 'pro', 'premium')),
+  amount numeric(10,2) not null default 0,
+  status text not null check (status in ('active', 'cancelled', 'expired', 'past_due', 'trialing')) default 'active',
+  stripe_subscription_id text,
+  current_period_start timestamptz default now(),
+  current_period_end timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_subscriptions_business on public.subscriptions(business_id);
+create index if not exists idx_subscriptions_status on public.subscriptions(status);
+
+-- ========== 2. BOOSTS (pibliye offer pou plis vizibilite) ==========
+create table if not exists public.boosts (
+  id uuid primary key default gen_random_uuid(),
+  offer_id uuid not null references public.offers(id) on delete cascade,
+  business_id uuid not null references public.businesses(id) on delete cascade,
+  amount numeric(10,2) not null,
+  duration_days int not null default 7,
+  starts_at timestamptz default now(),
+  ends_at timestamptz not null,
+  status text not null check (status in ('active', 'expired', 'cancelled')) default 'active',
+  stripe_payment_intent_id text,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_boosts_offer on public.boosts(offer_id);
+create index if not exists idx_boosts_business on public.boosts(business_id);
+create index if not exists idx_boosts_status on public.boosts(status);
+
+-- ========== 3. PAYMENTS (tout tranzaksyon) ==========
+create table if not exists public.payments (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid references public.businesses(id) on delete set null,
+  user_id uuid references public.profiles(id) on delete set null,
+  type text not null check (type in ('subscription', 'boost', 'service_fee', 'refund')),
+  amount numeric(10,2) not null,
+  currency text default 'usd',
+  status text not null check (status in ('pending', 'succeeded', 'failed', 'refunded')) default 'pending',
+  reference_id uuid,
+  stripe_payment_intent_id text,
+  description text,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_payments_business on public.payments(business_id);
+create index if not exists idx_payments_status on public.payments(status);
+create index if not exists idx_payments_type on public.payments(type);
+create index if not exists idx_payments_created on public.payments(created_at desc);
+
+-- ========== 4. TRIGGER updated_at pou subscriptions ==========
+drop trigger if exists trg_subscriptions_updated on public.subscriptions;
+create trigger trg_subscriptions_updated before update on public.subscriptions
+  for each row execute function public.handle_updated_at();
+
+-- ========== 5. ROW LEVEL SECURITY ==========
+alter table public.subscriptions enable row level security;
+alter table public.boosts enable row level security;
+alter table public.payments enable row level security;
+
+-- ---------- SUBSCRIPTIONS ----------
+drop policy if exists "admin_read_subscriptions" on public.subscriptions;
+create policy "admin_read_subscriptions" on public.subscriptions 
+  for select using (public.is_admin());
+
+drop policy if exists "owner_read_own_subscription" on public.subscriptions;
+create policy "owner_read_own_subscription" on public.subscriptions 
+  for select using (
+    business_id in (select id from public.businesses where owner_id = auth.uid())
+  );
+
+drop policy if exists "admin_write_subscriptions" on public.subscriptions;
+create policy "admin_write_subscriptions" on public.subscriptions 
+  for all using (public.is_admin());
+
+-- ---------- BOOSTS ----------
+drop policy if exists "admin_read_boosts" on public.boosts;
+create policy "admin_read_boosts" on public.boosts 
+  for select using (public.is_admin());
+
+drop policy if exists "owner_read_own_boost" on public.boosts;
+create policy "owner_read_own_boost" on public.boosts 
+  for select using (
+    business_id in (select id from public.businesses where owner_id = auth.uid())
+  );
+
+drop policy if exists "admin_write_boosts" on public.boosts;
+create policy "admin_write_boosts" on public.boosts 
+  for all using (public.is_admin());
+
+-- ---------- PAYMENTS ----------
+drop policy if exists "admin_read_payments" on public.payments;
+create policy "admin_read_payments" on public.payments 
+  for select using (public.is_admin());
+
+drop policy if exists "owner_read_own_payments" on public.payments;
+create policy "owner_read_own_payments" on public.payments 
+  for select using (
+    business_id in (select id from public.businesses where owner_id = auth.uid())
+  );
+
+drop policy if exists "admin_write_payments" on public.payments;
+create policy "admin_write_payments" on public.payments 
+  for all using (public.is_admin());
+
+-- ========== 6. FINI ==========
+select 'Admin schema ajoute ✅' as status;
+
 
 
 

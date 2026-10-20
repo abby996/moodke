@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#171821" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Moodke Admin — Control Panel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="loginScreen" class="login-screen">
+    <form class="login-card" id="adminLoginForm">
+      <div class="login-brand">
+        <span class="login-logo">Moodke</span>
+        <span class="login-badge">Admin</span>
+      </div>
+      <h1>Sign in</h1>
+      <p>Enter your admin credentials</p>
+
+      <label>Email</label>
+      <input type="email" id="adminEmail" required autocomplete="username" />
+
+      <label>Password</label>
+      <input type="password" id="adminPassword" required autocomplete="current-password" />
+
+      <button type="submit" class="btn-primary">Sign in</button>
+      <div id="loginError" class="error-msg"></div>
+    </form>
+  </div>
+
+  <!-- ADMIN APP -->
+  <div id="adminApp" class="admin-app" style="display:none">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-brand">
+        <span class="sb-logo">Moodke</span>
+        <span class="sb-tag">Admin</span>
+      </div>
+
+      <nav class="sb-nav">
+        <button class="sb-btn active" data-page="dashboard">📊 Dashboard</button>
+        <button class="sb-btn" data-page="users">👥 Users</button>
+        <button class="sb-btn" data-page="businesses">🏪 Businesses</button>
+        <button class="sb-btn" data-page="offers">🎁 Offers</button>
+        <button class="sb-btn" data-page="payments">💰 Payments</button>
+        <button class="sb-btn" data-page="boosts">🚀 Boosts</button>
+        <button class="sb-btn" data-page="reports">📈 Reports</button>
+      </nav>
+
+      <div class="sb-footer">
+        <div class="sb-user" id="adminUserEmail">—</div>
+        <button class="sb-logout" id="logoutBtn">🚪 Sign out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle" class="page-subtitle">Overview of your platform</p>
+        </div>
+        <div class="topbar-actions" id="topbarActions"></div>
+      </header>
+
+      <div id="pageContent" class="page-content">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

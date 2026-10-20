@@ -398,22 +398,3 @@ select 'Schema Moodke kreye ak siksè ✅' as status;
 
 
 
-
--- 1. Pèmèt tout moun wè (li) imaj ki nan bucket 'offers'
-create policy "Public read access for offers"
-on storage.objects for select
-using (bucket_id = 'offers');
-
--- 2. Pèmèt sèlman itilizatè ki konekte (authenticated) upload imaj
-create policy "Authenticated users can upload offers"
-on storage.objects for insert
-to authenticated
-with check (bucket_id = 'offers');
-
--- 3. Pèmèt sèlman pwopriyetè a efase imaj li
-create policy "Owner can delete offers"
-on storage.objects for delete
-using (
-  bucket_id = 'offers'
-  and auth.uid()::text = (storage.foldername(name))[1]
-);

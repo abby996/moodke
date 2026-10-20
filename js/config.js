@@ -6,6 +6,8 @@
    ========================================================= */
 
 window.MOODKE_CONFIG = {
+  FIREBASE_PROJECT_ID: "moodkey-app-pro",
+
   // ⚙️ Aktive oswa dezaktive Supabase
   // false = app la mache ak localStorage (dev mode)
   // true  = app la konekte ak Supabase

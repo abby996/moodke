@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "site": "mookey-pro",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      ".git/**",
+      ".github/**",
+      ".vscode/**",
+      "**/.*",
+      "**/node_modules/**",
+      "schema.sql"
+    ]
+  }
+}

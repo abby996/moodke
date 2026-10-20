@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "mookey-pro",
+    "site": "moodkey-pro",
     "public": ".",
     "ignore": [
       "firebase.json",

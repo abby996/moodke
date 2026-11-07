@@ -948,35 +948,74 @@ if ('serviceWorker' in navigator) {
    PWA — Install prompt (Android / Desktop)
    ========================================================= */
 let deferredPrompt = null;
+const installPromptDelay = 60_000;
+const installPromptDismissedKey = 'moodkeInstallPromptDismissed';
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Montre yon ti bouton enstale (opsyonèl)
-  showInstallButton();
 });
 
-function showInstallButton() {
-  if (document.getElementById('pwaInstallBtn')) return;
-  const btn = document.createElement('button');
-  btn.id = 'pwaInstallBtn';
-  btn.className = 'pwa-install';
-  btn.type = 'button';
-  btn.textContent = '📲 Install Moodke';
-  btn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
+function dismissInstallPrompt() {
+  sessionStorage.setItem(installPromptDismissedKey, 'true');
+  document.getElementById('pwaInstallPrompt')?.remove();
+}
+
+function showInstallInstructions(message) {
+  const instructions = document.getElementById('installInstructions');
+  const installButton = document.getElementById('installAppBtn');
+  if (!instructions || !installButton) return;
+  instructions.textContent = message;
+  installButton.hidden = true;
+}
+
+function showInstallPrompt() {
+  const isMobile = window.matchMedia('(max-width: 767px) and (pointer: coarse)').matches;
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  if (!isMobile || isInstalled || sessionStorage.getItem(installPromptDismissedKey)) return;
+
+  const prompt = document.createElement('aside');
+  prompt.id = 'pwaInstallPrompt';
+  prompt.className = 'install-prompt';
+  prompt.setAttribute('role', 'dialog');
+  prompt.setAttribute('aria-labelledby', 'installPromptTitle');
+  prompt.setAttribute('aria-describedby', 'installInstructions');
+  prompt.innerHTML = `
+    <button class="install-prompt-close" type="button" aria-label="Not now">×</button>
+    <strong id="installPromptTitle">Get Moodke on your phone</strong>
+    <p id="installInstructions">Install the app for quick access to nearby offers.</p>
+    <button id="installAppBtn" class="install-prompt-action" type="button">Install Moodke</button>
+  `;
+
+  prompt.querySelector('.install-prompt-close').addEventListener('click', dismissInstallPrompt);
+  prompt.querySelector('#installAppBtn').addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      showInstallInstructions(isIOS
+        ? 'In Safari, tap Share, then Add to Home Screen.'
+        : 'Open your browser menu and choose Install app or Add to Home screen.');
+      return;
+    }
+
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     console.log('Install outcome:', outcome);
     deferredPrompt = null;
-    btn.remove();
+    dismissInstallPrompt();
   });
-  document.body.appendChild(btn);
+
+  document.body.appendChild(prompt);
 }
+
+window.addEventListener('load', () => {
+  window.setTimeout(showInstallPrompt, installPromptDelay);
+});
 
 window.addEventListener('appinstalled', () => {
   console.log('✅ Moodke installed');
-  const btn = document.getElementById('pwaInstallBtn');
-  if (btn) btn.remove();
+  dismissInstallPrompt();
   showToast('🎉 Moodke installed!');
 });
